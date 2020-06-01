@@ -1,0 +1,39 @@
+String KEYSTORE_PATH_ID = "android_keystore_path"
+String KEYSTORE_PASS_ID = "android_keystore_pass"
+String KEYSTORE_KEY_NAME_ID = "android_keystore_key_name"
+String KEYSTORE_KEY_PASS_ID = "android_keystore_key_pass"
+String APK_UPLOAD_CREDENTIALS_ID = "google_play_android_developer"
+String GOOGLE_SERVICES_FILE_VAR_ID = "google_services.json"
+
+pipeline {
+    agent any
+
+    stages {
+        stage("Build Release Bundle") {
+            environment {
+                KEYSTORE_PATH = credentials("${KEYSTORE_PATH_ID}")
+                KEYSTORE_PASS = credentials("${KEYSTORE_PASS_ID}")
+                KEYSTORE_KEY_NAME = credentials("${KEYSTORE_KEY_NAME_ID}")
+                KEYSTORE_KEY_PASS = credentials("${KEYSTORE_KEY_PASS_ID}")
+                GOOGLE_SERVICES_FILE_PATH = credentials("${GOOGLE_SERVICES_FILE_VAR_ID}")
+            }
+            steps {
+                sh """
+                    ln -fs ${GOOGLE_SERVICES_FILE_PATH} app/google-services.json
+                    ./gradlew bundleR
+                """
+            }
+        }
+        stage("Upload Release Bundle") {
+            steps {
+                androidApkUpload googleCredentialsId: APK_UPLOAD_CREDENTIALS_ID
+            }
+        }
+    }
+
+    post {
+        success {
+            archiveArtifacts artifacts: 'app/build/outputs/**/*-release.aab', fingerprint: true
+        }
+    }
+}

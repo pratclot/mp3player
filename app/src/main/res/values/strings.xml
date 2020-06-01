@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">mp3player</string>
+    <string name="sample_tune_name">Sample Tune</string>
+    <string name="text_play_pause_button_play">Play</string>
+    <string name="text_play_pause_button_pause">Pause</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_content_uri_arg_for_exo_fragment">firstFragmentLaunch</string>
+</resources>
